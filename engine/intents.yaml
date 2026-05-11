@@ -1,0 +1,268 @@
+intents:
+  # ─── TEMPLATE type (no RAG, no LLM) ───
+  contact:
+    type: template
+    threshold: 0.65
+    response_ar: "رقم هاتف جامعة بوليتكنك فلسطين: 02-2233050\nالبريد الإلكتروني: info@ppu.edu\nللتواصل عبر موقع الجامعة: https://www.ppu.edu/p/ar/contact"
+    response_en: "PPU phone: 02-2233050\nEmail: info@ppu.edu\nContact page: https://www.ppu.edu/p/en/contact"
+    sources: ["https://www.ppu.edu/p/ar/contact"]
+    exemplars:
+      ar:
+        - "رقم هاتف الجامعة"
+        - "كيف أتصل بجامعة بوليتكنك فلسطين"
+        - "أرقام التواصل مع الجامعة"
+        - "البريد الإلكتروني للجامعة"
+        - "واتساب الجامعة"
+        - "وسائل الاتصال بالجامعة"
+        - "رقم هاتف كلية الهندسة"
+        - "إيميل الجامعة"
+        - "تواصل مع الجامعة"
+        - "رقم تلفون الجامعة"
+      en:
+        - "university phone number"
+        - "how to contact PPU"
+        - "PPU email address"
+        - "university contact information"
+        - "call the university"
+
+  location:
+    type: template
+    threshold: 0.65
+    response_ar: "تقع جامعة بوليتكنك فلسطين في الخليل:\n- ضاحية البلدية (الحرم الرئيسي)\n- أبو رمان\nهاتف: 02-2233050\nالموقع على الخريطة: https://maps.google.com/?q=Palestine+Polytechnic+University"
+    response_en: "PPU is located in Hebron:\n- Dahiat Albaladia (Main Campus)\n- Abu Romman\nPhone: 02-2233050\nMap: https://maps.google.com/?q=Palestine+Polytechnic+University"
+    sources: ["https://www.ppu.edu/p/ar/contact"]
+    exemplars:
+      ar:
+        - "أين تقع الجامعة"
+        - "عنوان الجامعة"
+        - "موقع الجامعة على الخريطة"
+        - "كيف أصل إلى الجامعة"
+        - "مبنى كلية الهندسة أين"
+        - "الحرم الجامعي"
+        - "ضاحية البلدية"
+        - "أين توجد بوليتكنك فلسطين"
+      en:
+        - "university location"
+        - "campus address"
+        - "where is PPU located"
+        - "PPU address"
+
+  about:
+    type: template
+    threshold: 0.70
+    response_ar: "جامعة بوليتكنك فلسطين هي جامعة فلسطينية رائدة في العلوم والتكنولوجيا والابتكار، تأسست في الخليل بهدف تقديم تعليم نوعي يواكب متطلبات العصر. تضم الجامعة 11 كلية في مختلف التخصصات.\nللمزيد: https://www.ppu.edu/p/ar/about"
+    response_en: "Palestine Polytechnic University (PPU) is a leading Palestinian university focused on science, technology, and innovation. Located in Hebron, it comprises 11 colleges across various disciplines.\nMore: https://www.ppu.edu/p/en/about"
+    sources: ["https://www.ppu.edu/p/ar/about"]
+    exemplars:
+      ar:
+        - "نبذة عن الجامعة"
+        - "تاريخ الجامعة"
+        - "رؤية ورسالة الجامعة"
+        - "نشأة جامعة بوليتكنك فلسطين"
+        - "من هي جامعة بوليتكنك فلسطين"
+        - "تعريف بالجامعة"
+        - "معلومات عن الجامعة"
+      en:
+        - "about PPU"
+        - "university history"
+        - "PPU mission and vision"
+        - "tell me about Palestine Polytechnic University"
+
+  navigation:
+    type: template
+    threshold: 0.65
+    response_ar: "يمكنك الوصول إلى الخدمات التالية عبر الروابط:\n- بوابة الطالب: https://student.ppu.edu\n- المكتبة الإلكترونية: https://www.ppu.edu/p/ar/library\n- المستودع الرقمي (DSpace): https://dspace.ppu.edu\n- البريد الإلكتروني: https://mail.ppu.edu\n- التعلم الإلكتروني: https://elearning.ppu.edu"
+    response_en: "Access PPU services:\n- Student Portal: https://student.ppu.edu\n- Library: https://www.ppu.edu/p/en/library\n- DSpace Repository: https://dspace.ppu.edu\n- Email: https://mail.ppu.edu\n- E-Learning: https://elearning.ppu.edu"
+    sources:
+      - "https://student.ppu.edu"
+      - "https://www.ppu.edu/p/ar/library"
+    exemplars:
+      ar:
+        - "بوابة الطالب"
+        - "المكتبة الإلكترونية"
+        - "نظام dspace"
+        - "تسجيل الدخول"
+        - "البوابة الإلكترونية"
+        - "موقع الجامعة"
+        - "رابط المكتبة"
+        - "الصفحة الرئيسية"
+        - "خدمات الطلبة أونلاين"
+        - "البريد الجامعي"
+      en:
+        - "student portal"
+        - "online library"
+        - "DSpace repository"
+        - "university website"
+        - "PPU login"
+        - "e-learning"
+
+  # ─── RAG type (RAG + LLM) ───
+  colleges:
+    type: rag
+    threshold: 0.70
+    response_ar: "لقد وجدت معلومات حول كليات وتخصصات جامعة بوليتكنك فلسطين. للاطلاع على الكليات والبرامج المتاحة، يرجى زيارة الرابط التالي:\n\n{url}"
+    response_en: "Here is information about PPU colleges and programs. Visit the link below for details:\n\n{url}"
+    sources: ["https://www.ppu.edu/p/ar/Colleges-Deanships"]
+    exemplars:
+      ar:
+        - "كليات الجامعة"
+        - "تخصصات كلية الهندسة"
+        - "أقسام كلية تكنولوجيا المعلومات"
+        - "برامج الماجستير"
+        - "كلية الطب"
+        - "كلية العلوم الإدارية والمعلوماتية"
+        - "كلية المهن التطبيقية"
+        - "كلية العلوم التطبيقية"
+        - "كلية الدراسات العليا"
+        - "التخصصات المتاحة في الجامعة"
+        - "كلية التمريض"
+        - "كلية طب الأسنان"
+        - "كلية الفنون والتصميم"
+        - "الأقسام العلمية"
+        - "ما هي تخصصات كلية الهندسة"
+        - "كم كلية في الجامعة"
+      en:
+        - "university colleges"
+        - "engineering programs"
+        - "IT college departments"
+        - "master degrees"
+        - "medical college PPU"
+        - "list of colleges"
+        - "faculties at PPU"
+
+  admission:
+    type: rag
+    threshold: 0.70
+    response_ar: "لقد وجدت معلومات حول شروط القبول والتسجيل في جامعة بوليتكنك فلسطين. للاطلاع على تفاصيل القبول والتسجيل، يرجى زيارة الرابط التالي:\n\n{url}"
+    response_en: "Here is information about admission requirements at PPU. Visit the link below for details:\n\n{url}"
+    sources: ["https://www.ppu.edu/p/ar/admission"]
+    exemplars:
+      ar:
+        - "شروط القبول في الجامعة"
+        - "موعد التسجيل للفصل الأول"
+        - "رسوم التسجيل"
+        - "كيف أقدم على الجامعة"
+        - "معدل القبول لتخصص الطب"
+        - "المنح الدراسية"
+        - "التسجيل المبكر"
+        - "الأوراق المطلوبة للتسجيل"
+        - "متطلبات القبول"
+        - "التقديم للجامعة"
+        - "مواعيد التقديم"
+        - "القبول والتسجيل"
+      en:
+        - "admission requirements"
+        - "application deadline"
+        - "tuition fees"
+        - "how to apply to PPU"
+        - "acceptance rate"
+        - "scholarships at PPU"
+        - "registration dates"
+
+  tuition:
+    type: rag
+    threshold: 0.70
+    response_ar: "لقد وجدت معلومات حول الرسوم الدراسية في جامعة بوليتكنك فلسطين. للاطلاع على تفاصيل الرسوم والتكاليف، يرجى زيارة الرابط التالي:\n\n{url}"
+    response_en: "Here is information about tuition fees at PPU. Visit the link below for details:\n\n{url}"
+    sources: ["https://www.ppu.edu/p/ar/admission"]
+    exemplars:
+      ar:
+        - "الرسوم الدراسية"
+        - "تكلفة الدراسة في الجامعة"
+        - "قسط كل فصل"
+        - "رسوم الساعة المعتمدة"
+        - "مصاريف الجامعة"
+        - "قسط كلية الهندسة"
+        - "الرسوم لكلية تكنولوجيا المعلومات"
+        - "كم تكلفة الدراسة"
+        - "أسعار الدراسة"
+        - "كم رسوم الجامعة"
+        - "كم سعر الدراسة"
+        - "كم قسط الطالب"
+        - "سعر الساعة المعتمدة"
+        - "اسعار التخصصات"
+        - "كيف اسعار الدراسة"
+        - "كم المصاريف"
+        - "القسط لكل فصل"
+      en:
+        - "tuition fees"
+        - "study cost"
+        - "fees per semester"
+        - "cost per credit hour"
+        - "how much does PPU cost"
+        - "how much is tuition"
+        - "semester fee"
+        - "price of study"
+
+  academic_calendar:
+    type: rag
+    threshold: 0.70
+    response_ar: "لقد وجدت معلومات حول التقويم الأكاديمي لجامعة بوليتكنك فلسطين. للاطلاع على التواريخ والمواعيد المهمة، يرجى زيارة الرابط التالي:\n\n{url}"
+    response_en: "Here is information about the academic calendar at PPU. Visit the link below for details:\n\n{url}"
+    sources: ["https://www.ppu.edu/p/ar/academic-calendar"]
+    exemplars:
+      ar:
+        - "التقويم الأكاديمي"
+        - "موعد الامتحانات النهائية"
+        - "بداية الفصل الدراسي"
+        - "العطل الرسمية"
+        - "نهاية التسجيل"
+        - "إجازة منتصف الفصل"
+        - "جدول الامتحانات"
+        - "موعد بداية العام"
+        - "العطلة الصيفية"
+      en:
+        - "academic calendar"
+        - "exam schedule"
+        - "semester start date"
+        - "holidays and breaks"
+        - "final exams date"
+
+  jobs:
+    type: rag
+    threshold: 0.70
+    response_ar: "لقد وجدت معلومات حول الوظائف الشاغرة في جامعة بوليتكنك فلسطين. للاطلاع على فرص العمل المتاحة، يرجى زيارة الرابط التالي:\n\n{url}"
+    response_en: "Here is information about job vacancies at PPU. Visit the link below for details:\n\n{url}"
+    sources: ["https://www.ppu.edu/p/ar/jobs"]
+    exemplars:
+      ar:
+        - "وظائف شاغرة في الجامعة"
+        - "التقديم على وظيفة"
+        - "فرص عمل"
+        - "توظيف في بوليتكنك فلسطين"
+        - "شواغر في الجامعة"
+        - "مسابقات وظيفية"
+        - "التعيينات"
+      en:
+        - "job vacancies"
+        - "careers at PPU"
+        - "employment opportunities"
+        - "job application at PPU"
+
+  student_services:
+    type: rag
+    threshold: 0.65
+    response_ar: "لقد وجدت معلومات حول الخدمات الطلابية في جامعة بوليتكنك فلسطين. للاطلاع على الخدمات المتاحة، يرجى زيارة الرابط التالي:\n\n{url}"
+    response_en: "Here is information about student services at PPU. Visit the link below for details:\n\n{url}"
+    sources: ["https://www.ppu.edu/p/ar/student-services"]
+    exemplars:
+      ar:
+        - "سجل الطالب"
+        - "كشف علامات"
+        - "معادلة شهادة"
+        - "السكن الجامعي"
+        - "النشاطات الطلابية"
+        - "النظام الداخلي"
+        - "خدمات الطلبة"
+        - "بطاقة الطالب"
+        - "النقل الداخلي بين التخصصات"
+        - "استخراج وثائق"
+        - "الخدمات الإلكترونية للطلبة"
+        - "شؤون الطلبة"
+      en:
+        - "student records"
+        - "transcript request"
+        - "student housing"
+        - "student services"
+        - "credit transfer"
+        - "student activities"

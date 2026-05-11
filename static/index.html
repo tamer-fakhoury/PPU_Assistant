@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مساعد جامعة بوليتكنك فلسطين</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; display: flex; flex-direction: column; }
+header { background: linear-gradient(135deg, #1a3a5c, #2d6a9f); color: #fff; padding: 20px; text-align: center; }
+header h1 { font-size: 1.4em; font-weight: 600; }
+header p { font-size: 0.85em; opacity: 0.85; margin-top: 4px; }
+main { flex: 1; max-width: 720px; margin: 0 auto; width: 100%; padding: 20px; display: flex; flex-direction: column; }
+.chat-box { flex: 1; background: #fff; border-radius: 12px; padding: 16px; overflow-y: auto; min-height: 400px; max-height: 60vh; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.msg { margin-bottom: 16px; padding: 12px 16px; border-radius: 12px; line-height: 1.6; font-size: 0.95em; max-width: 90%; }
+.msg.user { background: #e3f2fd; margin-left: auto; border-bottom-left-radius: 4px; }
+.msg.bot { background: #f5f5f5; margin-right: auto; border-bottom-right-radius: 4px; }
+.msg.bot .link { display: inline-block; margin-top: 6px; padding: 4px 12px; background: #e8f0fe; border-radius: 6px; font-size: 0.8em; color: #1a73e8; text-decoration: none; }
+.msg.bot .link:hover { background: #d2e3fc; text-decoration: underline; }
+.typing { color: #888; font-style: italic; }
+.input-area { display: flex; gap: 8px; margin-top: 12px; }
+.input-area input { flex: 1; padding: 12px 16px; border: 2px solid #ddd; border-radius: 24px; font-size: 1em; outline: none; }
+.input-area input:focus { border-color: #2d6a9f; }
+.input-area button { padding: 12px 24px; background: #2d6a9f; color: #fff; border: none; border-radius: 24px; font-size: 1em; cursor: pointer; }
+.input-area button:disabled { opacity: 0.5; cursor: not-allowed; }
+footer { text-align: center; padding: 12px; font-size: 0.75em; color: #888; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🤖 مساعد جامعة بوليتكنك فلسطين</h1>
+  <p>أستفسر عن الكليات، التخصصات، القبول، والخدمات الجامعية</p>
+</header>
+<main>
+  <div class="chat-box" id="chatBox">
+    <div class="msg bot">
+      مرحباً بك في مساعد جامعة بوليتكنك فلسطين الذكي.<br>
+      يمكنك سؤالي عن:<br>
+      • أرقام التواصل والعنوان<br>
+      • الكليات والتخصصات<br>
+      • شروط القبول والتسجيل<br>
+      • الرسوم الدراسية<br>
+      • التقويم الأكاديمي<br>
+      • روابط الخدمات
+    </div>
+  </div>
+  <div class="input-area">
+    <input type="text" id="queryInput" placeholder="اكتب سؤالك هنا..." autofocus>
+    <button id="sendBtn">إرسال</button>
+  </div>
+</main>
+<footer>جامعة بوليتكنك فلسطين &copy; 2026</footer>
+
+<script>
+const chatBox = document.getElementById('chatBox');
+const input = document.getElementById('queryInput');
+const btn = document.getElementById('sendBtn');
+
+btn.addEventListener('click', sendQuery);
+input.addEventListener('keydown', e => { if (e.key === 'Enter') sendQuery(); });
+
+function addMsg(text, cls, sources) {
+  const div = document.createElement('div');
+  div.className = `msg ${cls}`;
+  let html = text;
+  if (sources && sources.length > 0) {
+    html += '<br>';
+    for (const url of sources.slice(0, 3)) {
+      const label = url.replace(/https?:\/\//, '').split('/')[0];
+      html += `<a class="link" href="${url}" target="_blank">${label}</a> `;
+    }
+  }
+  div.innerHTML = html;
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function addTyping() {
+  const div = document.createElement('div');
+  div.className = 'msg bot typing';
+  div.id = 'typing';
+  div.textContent = 'جاري البحث...';
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing');
+  if (t) t.remove();
+}
+
+function sendQuery() {
+  const q = input.value.trim();
+  if (!q) return;
+  addMsg(q, 'user');
+  input.value = '';
+  btn.disabled = true;
+  addTyping();
+
+  fetch(`/query?q=${encodeURIComponent(q)}`)
+    .then(r => r.json())
+    .then(data => {
+      removeTyping();
+      if (data.text) {
+        addMsg(data.text, 'bot', data.sources || []);
+      }
+    })
+    .catch(() => {
+      removeTyping();
+      addMsg('عذراً، حدث خطأ في الاتصال. حاول مرة أخرى.', 'bot');
+    })
+    .finally(() => { btn.disabled = false; input.focus(); });
+}
+</script>
+</body>
+</html>

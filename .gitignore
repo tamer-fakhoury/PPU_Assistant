@@ -1,0 +1,9 @@
+data/*.bin
+data/*.json
+data/*.pkl
+.env
+__pycache__/
+*.pyc
+.DS_Store
+.env.example
+logs/
