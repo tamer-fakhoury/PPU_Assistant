@@ -28,6 +28,7 @@ CLASSIFY_SYSTEM = (
 
 MAX_TOKENS = 70
 MAX_TOKENS_SEARCH = 30
+MAX_TOKENS_ANSWER = 120
 
 SEARCH_SYSTEM = (
     "Given a user query and detected intent, output a short Arabic search query "
@@ -39,6 +40,14 @@ SEARCH_SYSTEM = (
     "- query: 'exam dates' intent: academic_calendar -> 'التقويم الأكاديمي مواعيد الامتحانات'\n"
     "- query: 'admission requirements' intent: admission -> 'شروط القبول والتسجيل'\n"
     "- query: 'كيف اسعار الدراسة' intent: tuition -> 'الرسوم الدراسية والمصاريف'\n"
+)
+
+ASK_SYSTEM = (
+    "You are a helpful assistant for Palestine Polytechnic University (PPU).\n"
+    "Answer the user's question based ONLY on the provided context from the university website.\n"
+    "Keep your answer very brief (1-3 sentences, about 100 tokens max).\n"
+    "If the answer cannot be found in the provided context, say exactly 'لا أعلم' (Arabic) or 'I don't know' (English).\n"
+    "Do not make up information. Do not include URLs in your answer."
 )
 
 
@@ -91,4 +100,31 @@ def generate_search_query(query: str, intent_name: str | None) -> str | None:
         return resp.choices[0].message.content.strip()
     except Exception as e:
         log.error("Groq search query gen failed: %s", e)
+        return None
+
+
+def ask(query: str, chunks: list[dict]) -> str | None:
+    client = _get_client()
+    if client is None or not chunks:
+        return None
+    context_parts = []
+    for i, c in enumerate(chunks[:5], 1):
+        text = c.get("text", "")
+        parts = text.split(" | ", 2)
+        content = parts[-1] if len(parts) > 2 else text
+        context_parts.append(f"[{i}] {content}")
+    context_str = "\n\n".join(context_parts)
+    try:
+        resp = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system", "content": ASK_SYSTEM},
+                {"role": "user", "content": f"Context:\n{context_str}\n\nQuestion: {query}"},
+            ],
+            max_tokens=MAX_TOKENS_ANSWER,
+            temperature=0.3,
+        )
+        return resp.choices[0].message.content.strip()
+    except Exception as e:
+        log.error("Groq ask failed: %s", e)
         return None

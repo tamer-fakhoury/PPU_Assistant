@@ -8,3 +8,4 @@ numpy
 groq
 python-dotenv
 camel-tools
+a2wsgi

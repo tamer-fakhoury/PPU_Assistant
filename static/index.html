@@ -7,110 +7,43 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; display: flex; flex-direction: column; }
-header { background: linear-gradient(135deg, #1a3a5c, #2d6a9f); color: #fff; padding: 20px; text-align: center; }
-header h1 { font-size: 1.4em; font-weight: 600; }
-header p { font-size: 0.85em; opacity: 0.85; margin-top: 4px; }
-main { flex: 1; max-width: 720px; margin: 0 auto; width: 100%; padding: 20px; display: flex; flex-direction: column; }
-.chat-box { flex: 1; background: #fff; border-radius: 12px; padding: 16px; overflow-y: auto; min-height: 400px; max-height: 60vh; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-.msg { margin-bottom: 16px; padding: 12px 16px; border-radius: 12px; line-height: 1.6; font-size: 0.95em; max-width: 90%; }
-.msg.user { background: #e3f2fd; margin-left: auto; border-bottom-left-radius: 4px; }
-.msg.bot { background: #f5f5f5; margin-right: auto; border-bottom-right-radius: 4px; }
-.msg.bot .link { display: inline-block; margin-top: 6px; padding: 4px 12px; background: #e8f0fe; border-radius: 6px; font-size: 0.8em; color: #1a73e8; text-decoration: none; }
-.msg.bot .link:hover { background: #d2e3fc; text-decoration: underline; }
-.typing { color: #888; font-style: italic; }
-.input-area { display: flex; gap: 8px; margin-top: 12px; }
-.input-area input { flex: 1; padding: 12px 16px; border: 2px solid #ddd; border-radius: 24px; font-size: 1em; outline: none; }
-.input-area input:focus { border-color: #2d6a9f; }
-.input-area button { padding: 12px 24px; background: #2d6a9f; color: #fff; border: none; border-radius: 24px; font-size: 1em; cursor: pointer; }
-.input-area button:disabled { opacity: 0.5; cursor: not-allowed; }
-footer { text-align: center; padding: 12px; font-size: 0.75em; color: #888; }
+header { background: linear-gradient(135deg, #1a3a5c, #2d6a9f); color: #fff; padding: 40px 20px; text-align: center; }
+header h1 { font-size: 1.8em; font-weight: 700; }
+header p { font-size: 1em; opacity: 0.85; margin-top: 8px; }
+main { flex: 1; max-width: 720px; margin: 0 auto; width: 100%; padding: 40px 20px; }
+.features { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 40px; }
+.feature { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; }
+.feature span { font-size: 2em; display: block; margin-bottom: 8px; }
+.feature h3 { font-size: 1em; color: #1a3a5c; margin-bottom: 4px; }
+.feature p { font-size: 0.82em; color: #666; }
+.embed-box { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); direction: ltr; }
+.embed-box h3 { direction: rtl; font-size: 1em; color: #1a3a5c; margin-bottom: 12px; }
+.embed-box code { display: block; background: #1a1a2e; color: #a8d8ea; padding: 16px; border-radius: 8px; font-size: 0.85em; overflow-x: auto; word-break: break-all; }
+.embed-box .note { direction: rtl; font-size: 0.82em; color: #888; margin-top: 12px; text-align: right; }
+footer { text-align: center; padding: 20px; font-size: 0.78em; color: #888; }
 </style>
 </head>
 <body>
 <header>
-  <h1>🤖 مساعد جامعة بوليتكنك فلسطين</h1>
-  <p>أستفسر عن الكليات، التخصصات، القبول، والخدمات الجامعية</p>
+  <h1>مساعد جامعة بوليتكنك فلسطين</h1>
+  <p>أستفسر عن الكليات، التخصصات، القبول، والخدمات الجامعية — بشكل ذكي وفوري</p>
 </header>
 <main>
-  <div class="chat-box" id="chatBox">
-    <div class="msg bot">
-      مرحباً بك في مساعد جامعة بوليتكنك فلسطين الذكي.<br>
-      يمكنك سؤالي عن:<br>
-      • أرقام التواصل والعنوان<br>
-      • الكليات والتخصصات<br>
-      • شروط القبول والتسجيل<br>
-      • الرسوم الدراسية<br>
-      • التقويم الأكاديمي<br>
-      • روابط الخدمات
-    </div>
+  <div class="features">
+    <div class="feature"><span>🏛️</span><h3>الكليات</h3><p>كل الكليات والتخصصات المتاحة</p></div>
+    <div class="feature"><span>📋</span><h3>القبول</h3><p>شروط ومواعيد القبول والتسجيل</p></div>
+    <div class="feature"><span>💰</span><h3>الرسوم</h3><p>الرسوم الدراسية والتكاليف</p></div>
+    <div class="feature"><span>📅</span><h3>التقويم</h3><p>التقويم الأكاديمي والمواعيد</p></div>
+    <div class="feature"><span>📞</span><h3>التواصل</h3><p>أرقام الهاتف والعنوان</p></div>
+    <div class="feature"><span>💼</span><h3>الوظائف</h3><p>الوظائف الشاغرة في الجامعة</p></div>
   </div>
-  <div class="input-area">
-    <input type="text" id="queryInput" placeholder="اكتب سؤالك هنا..." autofocus>
-    <button id="sendBtn">إرسال</button>
+  <div class="embed-box">
+    <h3>🔌 لإضافة المساعد إلى موقعك</h3>
+    <code>&lt;script src="https://ppu.saaspp.com/static/widget.js" data-api-base="https://ppu.saaspp.com"&gt;&lt;/script&gt;</code>
+    <div class="note">انسخ الكود أعلاه وألصقه في أي صفحة HTML — سيظهر زر المحادثة في الزاوية السفلية اليمنى.</div>
   </div>
 </main>
 <footer>جامعة بوليتكنك فلسطين &copy; 2026</footer>
-
-<script>
-const chatBox = document.getElementById('chatBox');
-const input = document.getElementById('queryInput');
-const btn = document.getElementById('sendBtn');
-
-btn.addEventListener('click', sendQuery);
-input.addEventListener('keydown', e => { if (e.key === 'Enter') sendQuery(); });
-
-function addMsg(text, cls, sources) {
-  const div = document.createElement('div');
-  div.className = `msg ${cls}`;
-  let html = text;
-  if (sources && sources.length > 0) {
-    html += '<br>';
-    for (const url of sources.slice(0, 3)) {
-      const label = url.replace(/https?:\/\//, '').split('/')[0];
-      html += `<a class="link" href="${url}" target="_blank">${label}</a> `;
-    }
-  }
-  div.innerHTML = html;
-  chatBox.appendChild(div);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-function addTyping() {
-  const div = document.createElement('div');
-  div.className = 'msg bot typing';
-  div.id = 'typing';
-  div.textContent = 'جاري البحث...';
-  chatBox.appendChild(div);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-function removeTyping() {
-  const t = document.getElementById('typing');
-  if (t) t.remove();
-}
-
-function sendQuery() {
-  const q = input.value.trim();
-  if (!q) return;
-  addMsg(q, 'user');
-  input.value = '';
-  btn.disabled = true;
-  addTyping();
-
-  fetch(`/query?q=${encodeURIComponent(q)}`)
-    .then(r => r.json())
-    .then(data => {
-      removeTyping();
-      if (data.text) {
-        addMsg(data.text, 'bot', data.sources || []);
-      }
-    })
-    .catch(() => {
-      removeTyping();
-      addMsg('عذراً، حدث خطأ في الاتصال. حاول مرة أخرى.', 'bot');
-    })
-    .finally(() => { btn.disabled = false; input.focus(); });
-}
-</script>
+<script src="/static/widget.js" data-api-base=""></script>
 </body>
 </html>

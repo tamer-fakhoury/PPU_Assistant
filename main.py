@@ -1,17 +1,17 @@
 import os
-import re
 import json
 import logging
 from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from engine.router import resolve_intent_via_llm, get_template_response, get_greeting_response, get_help_template, get_fallback_search_query
 from engine.rag import search
-from engine.llm import classify_intent, generate_search_query
+from engine.llm import classify_intent, generate_search_query, ask
 from engine.response import format_response
 
 load_dotenv()
@@ -46,46 +46,6 @@ def _pick_intent_chunk(chunks: list[dict], intent_name: str | None) -> dict | No
     return chunks[0] if chunks else None
 
 
-def _clean_excerpt(text: str, max_len: int = 180) -> str:
-    parts = text.split(" | ", 2)
-    content = parts[-1] if len(parts) > 2 else text
-    content = re.sub(r"\s+", " ", content).strip()
-    if len(content) > max_len:
-        content = content[:max_len] + "..."
-    return content
-
-
-def _build_rag_response(chunks: list[dict], best: dict | None, intent_name: str | None, lang: str) -> str:
-    if not chunks:
-        return ""
-    primary = best or chunks[0]
-    best_url = primary.get("url", "")
-    url_html = f'<a class="link" href="{best_url}" target="_blank">{best_url}</a>'
-    template, _ = get_template_response(intent_name, lang) if intent_name else ("", [])
-    if template:
-        text = template.replace("{url}", url_html).replace("\n", "<br>")
-    else:
-        text = f"لقد وجدت المعلومات التالية في موقع الجامعة:<br>{url_html}"
-    seen_urls = set()
-    excerpts = []
-    ordered = [best] + chunks if best else chunks
-    for c in ordered:
-        if c is None:
-            continue
-        url = c.get("url", "")
-        if url in seen_urls:
-            continue
-        seen_urls.add(url)
-        excerpt = _clean_excerpt(c.get("text", ""))
-        excerpts.append(f"• {excerpt}")
-        if len(excerpts) >= 2:
-            break
-    if excerpts:
-        text += "<br><br><strong>مقتطفات من الصفحة:</strong><br>"
-        text += "<br>".join(excerpts)
-    return text
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     log.info("PPU Assistant starting...")
@@ -94,6 +54,13 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="PPU Assistant", lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
@@ -133,14 +100,17 @@ def query(q: str = Query(..., min_length=1, max_length=500)):
         if text:
             return format_response(text, sources, "template").to_dict()
 
-    # ── RAG / LLM → resolve search query → retrieve → build rich response ──
+    # ── RAG / LLM → resolve search query → retrieve → LLM answer + URL ──
     if intent and intent.action in ("rag", "llm"):
         search_query = _resolve_search_query(q, intent)
         chunks = search(search_query, top_k=25)
         best = _pick_intent_chunk(chunks, intent.intent_name)
         if best and best.get("score", 0) >= RELEVANCE_THRESHOLD:
             sources = list(dict.fromkeys(c.get("url", "") for c in chunks if c.get("url")))
-            text = _build_rag_response(chunks, best, intent.intent_name, intent.lang)
+            answer = ask(q, chunks)
+            best_url = best.get("url", "")
+            url_html = f'<a class="link" href="{best_url}" target="_blank">{best_url}</a>'
+            text = f"{answer}<br><br>رابط الصفحة: {url_html}" if answer else f"رابط الصفحة: {url_html}"
             return format_response(text, sources, intent.action).to_dict()
 
     text, sources = get_help_template("ar")
@@ -169,7 +139,10 @@ def query_stream(q: str = Query(..., min_length=1, max_length=500)):
             best = _pick_intent_chunk(chunks, intent.intent_name)
             if best and best.get("score", 0) >= RELEVANCE_THRESHOLD:
                 sources = list(dict.fromkeys(c.get("url", "") for c in chunks if c.get("url")))
-                text = _build_rag_response(chunks, best, intent.intent_name, intent.lang)
+                answer = ask(q, chunks)
+                best_url = best.get("url", "")
+                url_html = f'<a class="link" href="{best_url}" target="_blank">{best_url}</a>'
+                text = f"{answer}<br><br>رابط الصفحة: {url_html}" if answer else f"رابط الصفحة: {url_html}"
                 yield f"data: {json.dumps({'text': text, 'sources': sources, 'method': intent.action})}\n\n"
                 return
 
